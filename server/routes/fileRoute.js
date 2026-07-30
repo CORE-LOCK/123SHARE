@@ -6,7 +6,7 @@ import deleteFIles from "../controllers/DeleteFiles.js"
 
 const router = Router();
 
-router.post("/upload", upload.single("file"), fileController);
+router.post("/upload", upload.array("file", 20), fileController);
 router.get("/upload", getFIles);
 router.delete("/File/:id", deleteFIles)
 

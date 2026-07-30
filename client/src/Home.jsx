@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import axios from "axios";
 
 const Home = () => {
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState([]);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef(null);
 
@@ -13,21 +13,23 @@ const Home = () => {
   };
 
   const handleFileChange = async (e) => {
-    const selectedFile = e.target.files[0];
+    const selectedFile = Array.from(e.target.files);
 
-    if (selectedFile) {
-      setFile(selectedFile);
-    }
+    if (selectedFile.length === 0) return;
+    setFile(selectedFile);
     try {
       setUploading(true);
+
+     
       const formData = new FormData();
-      formData.append("file", selectedFile);
+      formData.append("file", file);
       const response = await axios.post(
         "http://localhost:5000/upload",
         formData,
       );
       console.log(response.data);
       alert("file uploaded successfully!");
+  
     } catch (error) {
       console.error(error);
       alert("Upload failed.");

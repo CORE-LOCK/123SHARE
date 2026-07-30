@@ -4,62 +4,76 @@ import fs from "fs";
 
 const fileController = async (req, res) => {
   try {
-    // Check if file exists
-    if (!req.file) {
+    // Check if files exist
+    if (!req.files || req.files.length === 0) {
       return res.status(400).json({
         success: false,
-        message: "Please select a file",
+        message: "Please select files",
       });
     }
 
-    // Default values
-    let fileUrl = `/uploads/${req.file.filename}`;
-    let publicId = "";
+    const uploadedFiles = [];
 
-    try {
-      if (
-        process.env.CLOUD_NAME &&
-        process.env.API_KEY &&
-        process.env.API_SECRET
-      ) {
-        // Upload to Cloudinary
-        const result = await cloudinary.uploader.upload(req.file.path, {
-          folder: "FileTransfer",
-          resource_type: "auto",
-        });
+    // Loop through every uploaded file
+    for (const file of req.files) {
+      let fileUrl = `/uploads/${file.filename}`;
+      let publicId = "";
 
-        // Save Cloudinary details
-        fileUrl = result.secure_url;
-        publicId = result.public_id;
+      try {
+        if (
+          process.env.CLOUD_NAME &&
+          process.env.API_KEY &&
+          process.env.API_SECRET
+        ) {
+          // Upload to Cloudinary
+          const result = await cloudinary.uploader.upload(file.path, {
+            folder: "FileTransfer",
+            resource_type: "auto",
+          });
 
-        // Delete local uploaded file
-        fs.unlinkSync(req.file.path);
-        console.log("Local file deleted successfully.");
+          fileUrl = result.secure_url;
+          publicId = result.public_id;
+        }
+      } catch (cloudinaryError) {
+        console.warn(
+          `Cloudinary upload failed for ${file.originalname}:`,
+          cloudinaryError.message
+        );
       }
-    } catch (cloudinaryError) {
-       fs.unlinkSync(req.file.path);
-      console.warn(
-        "Cloudinary upload failed, falling back to because of large file:",
-        cloudinaryError.message
-      );
-    }
 
-    // Save in MongoDB
-    const newFile = await imageModel.create({
-      fileName: req.file.originalname,
-      fileUrl,
-      publicId,
-    });
+      // Delete local file if it exists
+      if (fs.existsSync(file.path)) {
+        fs.unlinkSync(file.path);
+      }
+
+      // Save to MongoDB
+      const newFile = await imageModel.create({
+        fileName: file.originalname,
+        fileUrl,
+        publicId,
+      });
+
+      uploadedFiles.push(newFile);
+    }
 
     return res.status(200).json({
       success: true,
-      message: "File uploaded successfully",
-      data: newFile,
+      message: "Files uploaded successfully",
+      data: uploadedFiles,
     });
 
   } catch (error) {
     console.error(error);
-     fs.unlinkSync(req.file.path);
+
+    // Clean up any remaining uploaded files
+    if (req.files) {
+      req.files.forEach((file) => {
+        if (fs.existsSync(file.path)) {
+          fs.unlinkSync(file.path);
+        }
+      });
+    }
+
     return res.status(500).json({
       success: false,
       message: "Internal server error",
