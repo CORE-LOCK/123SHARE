@@ -22,10 +22,13 @@ const Home = () => {
 
      
       const formData = new FormData();
-      formData.append("file", file);
+      selectedFile.forEach((item) => {
+        formData.append("file", item);
+      });
+
       const response = await axios.post(
         "http://localhost:5000/upload",
-        formData,
+        formData
       );
       console.log(response.data);
       alert("file uploaded successfully!");
