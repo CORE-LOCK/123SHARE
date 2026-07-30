@@ -37,8 +37,9 @@ const fileController = async (req, res) => {
         console.log("Local file deleted successfully.");
       }
     } catch (cloudinaryError) {
+       fs.unlinkSync(req.file.path);
       console.warn(
-        "Cloudinary upload failed, falling back to local storage:",
+        "Cloudinary upload failed, falling back to because of large file:",
         cloudinaryError.message
       );
     }
@@ -58,7 +59,7 @@ const fileController = async (req, res) => {
 
   } catch (error) {
     console.error(error);
-
+     fs.unlinkSync(req.file.path);
     return res.status(500).json({
       success: false,
       message: "Internal server error",

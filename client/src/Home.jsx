@@ -49,6 +49,7 @@ const Home = () => {
         </button>
         <input
           type="file"
+          multiple
           ref={fileInputRef}
           onChange={handleFileChange}
           hidden
