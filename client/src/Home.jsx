@@ -20,7 +20,6 @@ const Home = () => {
     try {
       setUploading(true);
 
-     
       const formData = new FormData();
       selectedFile.forEach((item) => {
         formData.append("file", item);
@@ -28,11 +27,9 @@ const Home = () => {
 
       const response = await axios.post(
         "http://localhost:5000/upload",
-        formData
+        formData,
       );
       console.log(response.data);
-      alert("file uploaded successfully!");
-  
     } catch (error) {
       console.error(error);
       alert("Upload failed.");
@@ -51,6 +48,7 @@ const Home = () => {
           onClick={handleSelectFile}
         >
           {uploading ? "UPLOADING..." : "UPLOAD"}
+
         </button>
         <input
           type="file"
@@ -60,6 +58,13 @@ const Home = () => {
           hidden
         ></input>
       </div>
+      
+    {uploading ? 
+      <div className="loader-overlay">
+    <span className="loader"></span>
+    </div>
+     : ""}
+
       <div className="w-full bg-[#3BF0FF] h-2/4 flex justify-center items-center">
         <button
           onClick={() => {
