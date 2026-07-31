@@ -29,6 +29,7 @@ const Home = () => {
         "http://localhost:5000/upload",
         formData,
       );
+      alert(` ${selectedFile.length} file uploded successfully`)
       console.log(response.data);
     } catch (error) {
       console.error(error);

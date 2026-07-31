@@ -48,7 +48,7 @@ const GridGallery = () => {
     <div>
       <Header />
       {popup ? (
-        <div className="w-full fixed h-full flex justify-center mt-[-40px] bg-gray-100/50 items-center">
+        <div className="w-full fixed h-full flex justify-center bg-gray-100/50 items-center">
         <div className="h-[40vh] rounded-[20px] gap-7 flex justify-center items-center flex-col bg-black w-[40%]">
           <h2 className="text-white text-2xl font-bold">
             Do You Really Want To Delete ?
@@ -67,7 +67,7 @@ const GridGallery = () => {
         ""
       )}
 
-      <div className="grid grid-cols-4 gap-6 py-20   px-8 bg-[#3BF0FF]">
+      <div className="grid grid-cols-4 gap-6 py-22   px-8 bg-[#3BF0FF]">
         {data.map((item) => (
           <div
             key={item._id}
