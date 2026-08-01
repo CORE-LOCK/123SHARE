@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Trash2 } from "lucide-react";
+import { Trash2, Clipboard } from "lucide-react";
 import Header from "./Header";
 
 const GridGallery = () => {
@@ -44,41 +44,70 @@ const GridGallery = () => {
     }
   };
 
+  const handelCopy = async (url) => {
+    try {
+       await navigator.clipboard.writeText(url);
+      alert("Link copied!");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div>
       <Header />
       {popup ? (
         <div className="w-full fixed h-full flex justify-center bg-gray-100/50 items-center">
-        <div className="h-[40vh] rounded-[20px] gap-7 flex justify-center items-center flex-col bg-black w-[40%]">
-          <h2 className="text-white text-2xl font-bold">
-            Do You Really Want To Delete ?
-          </h2>
-          <div className=" flex gap-2.5">
-            <button onClick={()=>setPopup(false)} className="text-white px-4 cursor-pointer py-2 rounded-md bg-red-400">
-              CANCLE
-            </button>
-            <button onClick={()=>{handleDelete(selectedId); setPopup(false);}} className="text-white px-8 py-2 cursor-pointer rounded-md bg-red-400">
-              OK
-            </button>
+          <div className="h-[40vh] rounded-[20px] gap-7 flex justify-center items-center flex-col bg-black w-[40%]">
+            <h2 className="text-white text-2xl font-bold">
+              Do You Really Want To Delete ?
+            </h2>
+            <div className=" flex gap-2.5">
+              <button
+                onClick={() => setPopup(false)}
+                className="text-white px-4 cursor-pointer py-2 rounded-md bg-red-400"
+              >
+                CANCLE
+              </button>
+              <button
+                onClick={() => {
+                  handleDelete(selectedId);
+                  setPopup(false);
+                }}
+                className="text-white px-8 py-2 cursor-pointer rounded-md bg-red-400"
+              >
+                OK
+              </button>
+            </div>
           </div>
-        </div>
         </div>
       ) : (
         ""
       )}
 
-      <div className="grid grid-cols-4 gap-6 py-22   px-8 bg-[#3BF0FF]">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 py-22   px-8 bg-[#3BF0FF]">
         {data.map((item) => (
           <div
             key={item._id}
             className="flex bg-gray-200 items-center flex-col rounded-lg shadow-md p-4"
           >
-            <Trash2
-              className="ml-60 cursor-pointer"
-              onClick={() => {setPopup(true);
-                setSelectedId(item._id);
-              }}
-            />
+            <div className="h-7 w-full flex place-content-between">
+              <Clipboard
+                className="cursor-pointer"
+                onClick={() => {
+                  handelCopy(item.fileUrl);
+                }}
+              />
+
+              <Trash2
+                className="cursor-pointer"
+                onClick={() => {
+                  setPopup(true);
+                  setSelectedId(item._id);
+                }}
+              />
+            </div>
+
             <img
               src={item.fileUrl}
               alt={item.fileName}

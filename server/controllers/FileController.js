@@ -33,6 +33,16 @@ const fileController = async (req, res) => {
 
           fileUrl = result.secure_url;
           publicId = result.public_id;
+
+             // Save to MongoDB
+      const newFile = await imageModel.create({
+        fileName: file.originalname,
+        fileUrl,
+        publicId,
+        resourceType: result.resource_type,
+      });
+
+      uploadedFiles.push(newFile);
         }
       } catch (cloudinaryError) {
         console.warn(
@@ -46,14 +56,7 @@ const fileController = async (req, res) => {
         fs.unlinkSync(file.path);
       }
 
-      // Save to MongoDB
-      const newFile = await imageModel.create({
-        fileName: file.originalname,
-        fileUrl,
-        publicId,
-      });
-
-      uploadedFiles.push(newFile);
+   
     }
 
     return res.status(200).json({

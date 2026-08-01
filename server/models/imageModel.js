@@ -12,9 +12,13 @@ const imageModel = new mongoose.Schema({
     },
     publicId: {
     type: String,
-    // required: true,
     default:"",
-  },
+    },
+
+      resourceType: {
+      type: String,
+      required: true,
+    },
    
 },{ timestamps:true});
 
