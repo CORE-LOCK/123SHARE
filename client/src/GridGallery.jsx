@@ -9,9 +9,14 @@ const GridGallery = () => {
   const [selectedId, setSelectedId] = useState(null);
 
   const getData = async () => {
-    const response = await axios.get("http://localhost:5000/upload");
+    try{
+          const response = await axios.get("http://localhost:5000/upload");
     setData(response.data.data);
     console.log(response.data);
+    }catch(error){
+    console.log(error.message || error.response?.data)
+    }
+  
   };
 
   useEffect(() => {
@@ -46,10 +51,35 @@ const GridGallery = () => {
 
   const handelCopy = async (url) => {
     try {
-       await navigator.clipboard.writeText(url);
+      await navigator.clipboard.writeText(url);
       alert("Link copied!");
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const renderPreview = (item) => {
+    switch (item.resourceType) {
+      case "image":
+        return (
+          <img
+            src={item.fileUrl}
+            alt={item.fileName}
+            className="w-full h-52 object-contain rounded-md"
+          />
+        );
+
+      case "video":
+        return (
+          <video
+            src={item.fileUrl}
+            controls
+            className="w-full h-52 object-contain rounded-md"
+          />
+        );
+
+      default:
+        return <p>No preview available</p>;
     }
   };
 
@@ -108,11 +138,7 @@ const GridGallery = () => {
               />
             </div>
 
-            <img
-              src={item.fileUrl}
-              alt={item.fileName}
-              className="w-full h-52 object-contain rounded-md"
-            />
+            {renderPreview(item)}
 
             <p className="mt-3 break-all text-center font-semibold">
               {item.fileName}
