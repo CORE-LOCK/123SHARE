@@ -14,11 +14,14 @@ const imageModel = new mongoose.Schema({
     type: String,
     default:"",
     },
-
-      resourceType: {
+    resourceType: {
       type: String,
       required: true,
     },
+    fileSize:{
+        type:Number,
+        required: true,
+    }
    
 },{ timestamps:true});
 

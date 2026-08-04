@@ -40,6 +40,7 @@ const fileController = async (req, res) => {
         fileUrl,
         publicId,
         resourceType: result.resource_type,
+        fileSize : result.bytes,
       });
 
       uploadedFiles.push(newFile);
